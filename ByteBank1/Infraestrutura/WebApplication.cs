@@ -42,37 +42,26 @@ namespace ByteBank1.Infraestrutura
             var resposta = contexto.Response;
 
             var path = requisicao.Url.AbsolutePath;
+            Console.WriteLine(path);
 
             if (Utilidades.EhArquivo(path))
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                var nomeResource = Utilidades.ConverterPathParaNomeAssembly(path);
-
-                var resourceStream = assembly.GetManifestResourceStream(nomeResource);
-                if (resourceStream == null)
-                {
-                    resposta.StatusCode = 404;
-                    resposta.OutputStream.Close();
-                }
-                else
-                {
-                    var bytesResource = new byte[resourceStream.Length];
-
-                    resourceStream.Read(bytesResource, 0, (int)resourceStream.Length);
-
-                    resposta.ContentType = Utilidades.ObterTipoDeConteudo(path);
-                    resposta.StatusCode = 200;
-                    resposta.ContentLength64 = resourceStream.Length;
-
-                    resposta.OutputStream.Write(bytesResource, 0, bytesResource.Length);
-
-                    resposta.OutputStream.Close();
-                }
+                var manipulador = new ManipuladorRequisicaoArquivo();
+                manipulador.Manipular(resposta, path);
             }
             else if (path == "/Cambio/MXN")
             {
                 var controller = new CambioController();
                 var paginaConteudo = controller.MXN();
+
+                var bufferArquivo = Encoding.UTF8.GetBytes(paginaConteudo);
+
+                resposta.StatusCode = 200;
+                resposta.ContentType = "text/html; charset=utf-8";
+                resposta.ContentLength64 = bufferArquivo.Length;
+
+                resposta.OutputStream.Write(bufferArquivo, 0, bufferArquivo.Length);
+                resposta.OutputStream.Close();
             }
 
 

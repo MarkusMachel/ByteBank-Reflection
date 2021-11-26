@@ -49,19 +49,10 @@ namespace ByteBank1.Infraestrutura
                 var manipulador = new ManipuladorRequisicaoArquivo();
                 manipulador.Manipular(resposta, path);
             }
-            else if (path == "/Cambio/MXN")
+            else
             {
-                var controller = new CambioController();
-                var paginaConteudo = controller.MXN();
-
-                var bufferArquivo = Encoding.UTF8.GetBytes(paginaConteudo);
-
-                resposta.StatusCode = 200;
-                resposta.ContentType = "text/html; charset=utf-8";
-                resposta.ContentLength64 = bufferArquivo.Length;
-
-                resposta.OutputStream.Write(bufferArquivo, 0, bufferArquivo.Length);
-                resposta.OutputStream.Close();
+                var manipulador = new ManipuladorRequisicaoController();
+                manipulador.Manipular(resposta, path);
             }
 
 

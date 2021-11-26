@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\CambioController.cs" />
     <Compile Include="Infraestrutura\Utilidades.cs" />
     <Compile Include="Infraestrutura\WebApplication.cs" />
     <Compile Include="Program.cs" />
@@ -59,6 +60,12 @@
     <EmbeddedResource Include="View\Cartoes\Credito.html" />
     <EmbeddedResource Include="View\Cartoes\Debito.html" />
     <EmbeddedResource Include="View\Home\Index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ByteBank.Service\ByteBank.Service.csproj">
+      <Project>{963773A0-EEFE-482F-931E-11D409AA630F}</Project>
+      <Name>ByteBank.Service</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ByteBank1.Controller;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -42,29 +43,43 @@ namespace ByteBank1.Infraestrutura
 
             var path = requisicao.Url.AbsolutePath;
 
-            var assembly = Assembly.GetExecutingAssembly();
-            var nomeResource = Utilidades.ConverterPathParaNomeAssembly(path);
-
-            var resourceStream = assembly.GetManifestResourceStream(nomeResource);
-            if (resourceStream == null)
+            if (Utilidades.EhArquivo(path))
             {
-                resposta.StatusCode = 404;
-                resposta.OutputStream.Close();
+                var assembly = Assembly.GetExecutingAssembly();
+                var nomeResource = Utilidades.ConverterPathParaNomeAssembly(path);
+
+                var resourceStream = assembly.GetManifestResourceStream(nomeResource);
+                if (resourceStream == null)
+                {
+                    resposta.StatusCode = 404;
+                    resposta.OutputStream.Close();
+                }
+                else
+                {
+                    var bytesResource = new byte[resourceStream.Length];
+
+                    resourceStream.Read(bytesResource, 0, (int)resourceStream.Length);
+
+                    resposta.ContentType = Utilidades.ObterTipoDeConteudo(path);
+                    resposta.StatusCode = 200;
+                    resposta.ContentLength64 = resourceStream.Length;
+
+                    resposta.OutputStream.Write(bytesResource, 0, bytesResource.Length);
+
+                    resposta.OutputStream.Close();
+                }
             }
-            else
+            else if (path == "/Cambio/MXN")
             {
-                var bytesResource = new byte[resourceStream.Length];
-
-                resourceStream.Read(bytesResource, 0, (int)resourceStream.Length);
-
-                resposta.ContentType = Utilidades.ObterTipoDeConteudo(path);
-                resposta.StatusCode = 200;
-                resposta.ContentLength64 = resourceStream.Length;
-
-                resposta.OutputStream.Write(bytesResource, 0, bytesResource.Length);
-
-                resposta.OutputStream.Close();
+                var controller = new CambioController();
+                var paginaConteudo = controller.MXN();
             }
+
+
+
+
+
+           
 
             
             httpListener.Stop();

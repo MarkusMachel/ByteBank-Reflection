@@ -46,17 +46,26 @@ namespace ByteBank1.Infraestrutura
             var nomeResource = Utilidades.ConverterPathParaNomeAssembly(path);
 
             var resourceStream = assembly.GetManifestResourceStream(nomeResource);
-            var bytesResource = new byte[resourceStream.Length];
+            if (resourceStream == null)
+            {
+                resposta.StatusCode = 404;
+                resposta.OutputStream.Close();
+            }
+            else
+            {
+                var bytesResource = new byte[resourceStream.Length];
 
-            resourceStream.Read(bytesResource, 0, (int)resourceStream.Length);
+                resourceStream.Read(bytesResource, 0, (int)resourceStream.Length);
 
-            resposta.ContentType = Utilidades.ObterTipoDeConteudo(path);
-            resposta.StatusCode = 200;
-            resposta.ContentLength64 = resourceStream.Length;
+                resposta.ContentType = Utilidades.ObterTipoDeConteudo(path);
+                resposta.StatusCode = 200;
+                resposta.ContentLength64 = resourceStream.Length;
 
-            resposta.OutputStream.Write(bytesResource, 0, bytesResource.Length);
+                resposta.OutputStream.Write(bytesResource, 0, bytesResource.Length);
 
-            resposta.OutputStream.Close();
+                resposta.OutputStream.Close();
+            }
+
             
             httpListener.Stop();
         }

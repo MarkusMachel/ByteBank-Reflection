@@ -15,7 +15,7 @@ namespace ByteBank1.Controller
             _cambioService =  new CambioTesteService();
         }
 
-        [ApenasHorarioComercial]
+        [ApenasHorarioComercialFiltro]
         public string MXN()
         {
            var valorFinal = _cambioService.Calcular("MXN", "BRL", 1);
@@ -25,7 +25,7 @@ namespace ByteBank1.Controller
 
            return textoResultado;
         }
-        [ApenasHorarioComercial]
+        [ApenasHorarioComercialFiltro]
         public string USD()
         {
            var valorFinal = _cambioService.Calcular("USD", "BRL", 1);
@@ -33,7 +33,7 @@ namespace ByteBank1.Controller
                Valor = valorFinal
             });
         }
-        [ApenasHorarioComercial]
+        [ApenasHorarioComercialFiltro]
         public string Calculo(string moedaOrigem, string moedaDestino, decimal valor)
         {
             var valorFinal = _cambioService.Calcular(moedaOrigem, moedaDestino, valor);
@@ -47,7 +47,7 @@ namespace ByteBank1.Controller
 
             return View(modelo);
         }
-        [ApenasHorarioComercial]
+        [ApenasHorarioComercialFiltro]
         public string Calculo(string moedaDestino, decimal valor) =>
             Calculo("BRL", moedaDestino, valor);
 

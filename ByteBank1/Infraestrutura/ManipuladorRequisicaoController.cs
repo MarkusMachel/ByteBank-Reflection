@@ -1,5 +1,6 @@
 ﻿using ByteBank1.Infraestrutura.Binding;
 using ByteBank1.Infraestrutura.Filtros;
+using ByteBank1.Infraestrutura.IoC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,12 @@ namespace ByteBank1.Infraestrutura
     {
         private readonly ActionBinder _actionBinder = new ActionBinder();
         private readonly FilterResolver _filterResolver = new FilterResolver();
+        private readonly ControllerResolver _controllerResolver;
+
+        public ManipuladorRequisicaoController(IContainer container)
+        {
+            _controllerResolver = new ControllerResolver(container);
+        }
 
         public void Manipular (HttpListenerResponse resposta, string path)
         {
@@ -23,10 +30,11 @@ namespace ByteBank1.Infraestrutura
 
             var controllerNomeCompleto = $"ByteBank1.Controller.{controllerNome}Controller";
 
-            var controllerWrapper = Activator.CreateInstance("ByteBank1", controllerNomeCompleto, new object[0]);
-            var controller = controllerWrapper.Unwrap();
 
+            //var controllerWrapper = Activator.CreateInstance("ByteBank1", controllerNomeCompleto, new object[0]);
+            //var controller = controllerWrapper.Unwrap();
 
+            var controller = _controllerResolver.ObterController(controllerNomeCompleto);
 
             //var methodInfo = controller.GetType().GetMethod(actionNome);
             var actionBindInfo = _actionBinder.ObterActionBindInfo(controller, path);
